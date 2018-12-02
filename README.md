@@ -1,26 +1,12 @@
 # vue-drum-machine
 
-## Project setup
-```
-yarn install
-```
+Simple step sequencer built with Vue
 
-### Compiles and hot-reloads for development
-```
-yarn run serve
-```
+## How to skrrt
 
-### Compiles and minifies for production
-```
-yarn run build
-```
+- Run `npm start`
+- Be dope
 
-### Run your tests
-```
-yarn run test
-```
+## Original source
 
-### Lints and fixes files
-```
-yarn run lint
-```
+This is a port of [Ken Wheeler's Hooks Drum Machine](https://github.com/kenwheeler/hooks-drum-machine).
