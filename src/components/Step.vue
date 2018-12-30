@@ -59,7 +59,6 @@ export default {
 }
 
 .step {
-  flex: 1;
   border-radius: 2px;
   margin: 2px;
 }

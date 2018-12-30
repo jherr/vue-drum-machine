@@ -27,7 +27,6 @@ export default {
 }
 </script>
 
-
 <style>
 .container {
   max-width: 800px;
@@ -36,8 +35,6 @@ export default {
   border: 2px solid black;
   border-radius: 4px;
   margin-top: 20px;
-  display: flex;
-  flex-direction: column;
 }
 
 .logo {
@@ -45,25 +42,18 @@ export default {
   color: #25ccf7;
   font-family: 'Righteous', cursive;
   padding: 20px;
-  margin: 0;
+  margin: 0px;
   text-transform: uppercase;
-  display: inline-block;
 }
 
 .transport {
-  flex: 0 1 auto;
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-  align-items: space-between;
+  display: grid;
+  grid-template-columns: 50% 25% 25%;
 }
 
 .button-container {
-  flex: 1;
-  flex-direction: row;
-  align-items: stretch;
-  width: 100%;
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
   padding: 0px 20px 10px;
-  display: flex;
 }
 </style>

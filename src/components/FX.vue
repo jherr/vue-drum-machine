@@ -57,7 +57,6 @@ export default {
 
 <style>
 .fx {
-  flex: 1;
   border: 2px solid #fd7272;
   display: inline-block;
   font-size: 24px;

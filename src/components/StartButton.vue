@@ -34,7 +34,7 @@ export default {
   font-family: 'Righteous', cursive;
   padding: 10px;
   font-size: 18px;
-  border-radius: 2;
+  border-radius: 2px;
   margin: 2px 4px;
   margin-right: 20px;
   align-self: center;
