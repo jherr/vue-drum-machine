@@ -10,6 +10,7 @@ let resumedAudioContext = false;
 const resumeAudioContext = () => {
   if (!resumedAudioContext) {
     Tone.context.resume();
+    resumedAudioContext = true;
   }
 };
 
