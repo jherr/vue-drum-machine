@@ -1,8 +1,17 @@
-import Vue from 'vue'
-import VueX from 'vuex'
-import Tone from 'tone'
+import Vue from 'vue';
+import VueX from 'vuex';
+import Tone from 'tone';
 
 Vue.use(VueX);
+
+// Recent changes to audio policies require resuming:
+// https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#webaudio
+let resumedAudioContext = false;
+const resumeAudioContext = () => {
+  if (!resumedAudioContext) {
+    Tone.context.resume();
+  }
+};
 
 const soundNames = [
   'bass',
@@ -103,6 +112,7 @@ const store = new VueX.Store({
   },
   actions: {
     toggleOn({ state, commit }) {
+      resumeAudioContext();
       commit('toggleOn');
       if (state.on) {
         Tone.Transport.bpm.value = state.bpm;
@@ -113,16 +123,19 @@ const store = new VueX.Store({
       }
     },
     setBPM({ state, commit }, bpm) {
-      commit('setNPM', bpm);
+      resumeAudioContext();
+      commit('setBPM', bpm);
       Tone.Transport.bpm.value = state.bpm;
     },
     startSound({ state: { sounds }}, { name, volume, loop }) {
+      resumeAudioContext();
       const { buffer } = sounds.find((s) => s.name === name);
       buffer.volume.value = volume;
       buffer.loop = loop;
       buffer.start();
     },
     stopSound({ state: { sounds }}, { name }) {
+      resumeAudioContext();
       const { buffer } = sounds.find((s) => s.name === name);
       buffer.stop();
     },
