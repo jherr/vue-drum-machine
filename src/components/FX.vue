@@ -39,7 +39,7 @@ export default {
         this.held = true;
         loop = true;
       }
-      this.$store.dispatch('startSound', {
+      this.$store.commit('startSound', {
         name: this.sound,
         volume: -8,
         loop
@@ -47,7 +47,7 @@ export default {
     },
     stopSound() {
       this.held = false;
-      this.$store.dispatch('stopSound', {
+      this.$store.commit('stopSound', {
         name: this.sound,
       });
     }

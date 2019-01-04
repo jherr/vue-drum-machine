@@ -4,7 +4,7 @@ Simple step sequencer built with Vue
 
 ## How to skrrt
 
-- Run `npm start`
+- Run `npm run serve`
 - Be dope
 
 ## Original source

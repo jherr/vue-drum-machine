@@ -16,7 +16,7 @@ export default {
         return this.$store.state.bpm;
       },
       set(val) {
-        this.$store.dispatch('setBPM', val);
+        this.$store.commit('setBPM', val);
       }
     }
   }
