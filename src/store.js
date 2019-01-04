@@ -1,44 +1,16 @@
 import Vue from 'vue';
 import VueX from 'vuex';
-import Tone from 'tone';
+
+import manager from './drumMachineManager';
 
 Vue.use(VueX);
-
-// Recent changes to audio policies require resuming:
-// https://developers.google.com/web/updates/2017/09/autoplay-policy-changes#webaudio
-let resumedAudioContext = false;
-const resumeAudioContext = () => {
-  if (!resumedAudioContext) {
-    Tone.context.resume();
-    resumedAudioContext = true;
-  }
-};
-
-const soundNames = [
-  'bass',
-  'clap',
-  'hat2',
-  'hey',
-  'hihat',
-  'kick',
-  'loop',
-  'loop130',
-  'nah',
-  'openhihat',
-  'snare',
-  'sub',
-  'yeah',
-];
 
 const store = new VueX.Store({
   state: {
     bpm: 65,
     on: false,
     step: 0,
-    sounds: soundNames.map(name => ({
-      name,
-      buffer: null,
-    })),
+    ready: false,
     tracks: [
       {
         name: 'Kick',
@@ -77,16 +49,12 @@ const store = new VueX.Store({
       }
     ]
   },
-  getters: {
-    ready(state) {
-      return state.sounds
-        .filter(({ buffer }) => buffer === null)
-        .length === 0;
-    }
-  },
   mutations: {
     setStep(state, step) {
       state.step = step;
+    },
+    setReady(state) {
+      state.ready = true;
     },
     setTrackStep(state, { shiftEnabled, track, step}) {
       const steps = state.tracks[track].steps.slice();
@@ -99,76 +67,35 @@ const store = new VueX.Store({
           : 0;
       steps[step] = val;
       state.tracks[track].steps = steps;
+      manager.setTracks(state.tracks);
     },
     setBPM(state, bpm) {
       state.bpm = bpm;
+      manager.setBPM(bpm);
     },
     toggleOn(state) {
       state.on = !state.on;
+      if (state.on) {
+        manager.start(state.bpm);
+      } else {
+        manager.stop();
+      }
     },
-    setSound({ sounds }, { name, buffer }) {
-      const sound = sounds.find((s) => s.name === name);
-      sound.buffer = buffer;
+    startSound(state, { name, volume, loop }) {
+      manager.startSound(name, volume, loop);
+    },
+    stopSound(state, { name }) {
+      manager.stopSound(name);
     }
   },
-  actions: {
-    toggleOn({ state, commit }) {
-      resumeAudioContext();
-      commit('toggleOn');
-      if (state.on) {
-        Tone.Transport.bpm.value = state.bpm;
-        Tone.Transport.start();
-      } else {
-        Tone.Transport.stop();
-        commit('setStep', 0);
-      }
-    },
-    setBPM({ state, commit }, bpm) {
-      resumeAudioContext();
-      commit('setBPM', bpm);
-      Tone.Transport.bpm.value = state.bpm;
-    },
-    startSound({ state: { sounds }}, { name, volume, loop }) {
-      resumeAudioContext();
-      const { buffer } = sounds.find((s) => s.name === name);
-      buffer.volume.value = volume;
-      buffer.loop = loop;
-      buffer.start();
-    },
-    stopSound({ state: { sounds }}, { name }) {
-      resumeAudioContext();
-      const { buffer } = sounds.find((s) => s.name === name);
-      buffer.stop();
-    },
-    fetchSounds({ commit }) {
-      soundNames.forEach(name => {
-        const buffer = new Tone.Player(`sounds/${name}.wav`, () => {
-          commit('setSound', {
-            name,
-            buffer
-          })      
-        }).toMaster();
-      });
-    }
-  }
 });
 
-store.dispatch('fetchSounds');
+manager.onReady(() => {
+  store.commit('setReady');
+});
 
-Tone.Transport.scheduleRepeat(function(time) {
-  if(store.state.on) {
-    store.state.tracks.forEach(({ steps, sound }) => {
-      const snd = store.state.sounds.find((s) => s.name === sound);
-      if (steps[store.state.step] === 1) {
-        snd.buffer.start(time);
-      } else if (steps[store.state.step] === 2) {
-        snd.buffer.start();
-        snd.buffer.start('+64n');
-        snd.buffer.start('+32n');
-      }
-    });
-    store.commit('setStep', store.state.step > 14 ? 0 : store.state.step + 1);
-  }
-}, '16n');
+manager.onStepChange((step) => {
+  store.commit('setStep', step);
+});
 
 export default store;

@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     toggleOn() {
-      this.$store.dispatch('toggleOn');
+      this.$store.commit('toggleOn');
     }
   }
 }
